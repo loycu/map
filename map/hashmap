@@ -9,11 +9,17 @@ put方法
 	3.冲突替换
 	链表转树,resize扩容
 
+	指的就是把链表转换成红黑树，树化需要满足以下两个条件：
+
+    链表长度大于等于 8
+    table 数组长度大于等于 64
+
+
 Node<K,V>[] tab; Node<K,V> p; int n(tab长度), i(第几个);
 
 resize   e.hash & oldCap 获取某个位置的bit
 如果这个bit是0 则插入原先的位置,如果bit1则插入两倍的位置
-
+ hash % length==(length - 1) & hash
  Node<K,V> loHead = null, loTail = null;(低位链表尾部)
                         Node<K,V> hiHead = null, hiTail = null;
                         Node<K,V> next;
@@ -21,10 +27,35 @@ resize   e.hash & oldCap 获取某个位置的bit
   newTab[j] = loHead;
   newTab[j + oldCap] = hiHead;
     如果是个链表,则需要根据扩容后hash&cap的变化移动数据
-
+    e.hash & oldCap 解析
 resize 容量 阈值 迁移
 超过 cap* loadfactor 0.75 泊松分布
 
  int oldCap = (oldTab == null) ? 0 : oldTab.length;
         int oldThr = threshold;
         int newCap, newThr = 0;
+
+        位运算基础
+
+        说到与(&)、或(|)、非(~)、异或(^)、位移等位运算，
+
+ 默认大小、负载因子以及扩容倍数是多少
+ 16 0.75 2
+ 底层数据结构 数组 链表+红黑树
+ 如何处理 hash 冲突的 链表
+ 如何计算一个 key 的 hash 值 hashcode& cap-1
+ 数组长度为什么是 2 的幂次方 方便扩容 1. 当数组长度为 2 的幂次方时，可以使用位运算来计算元素在数组中的下标 2. 增加 hash 值的随机性，减少 hash 冲突
+ 扩容、查找过程
+
+ /*找到大于或等于 cap 的最小2的幂，用来做容量阈值*/
+ static final int tableSizeFor(int cap) {
+     int n = cap - 1;
+     n |= n >>> 1;
+     n |= n >>> 2;
+     n |= n >>> 4;
+     n |= n >>> 8;
+     n |= n >>> 16;
+     return (n < 0) ? 1 : (n >= MAXIMUM_CAPACITY) ? MAXIMUM_CAPACITY : n + 1;
+ }
+    该算法让最高位的 1 后面的位全变为 1。最后再让结果 n+1，即得到了 2 的整数次幂的值了。
+

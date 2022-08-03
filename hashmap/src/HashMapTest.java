@@ -1,4 +1,5 @@
 import java.util.HashMap;
+import java.util.Objects;
 
 /**
  * @author lotanyang
@@ -6,7 +7,7 @@ import java.util.HashMap;
  **/
 public class HashMapTest {
 
-    public static void main(String[] args) {
+    public static void main(StringTest[] args) {
 
 //        e.hash & oldCap
         int result=162 & 16;
@@ -33,4 +34,39 @@ public class HashMapTest {
         });
     }
 
+
+    public static class Person {
+        Integer id;
+        String name;
+
+        public Person(Integer id, String name) {
+            this.id = id;
+            this.name = name;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(id);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == null) return false;
+            if (obj == this) return true;
+            if (obj instanceof Person) {
+                Person person = (Person) obj;
+                if (this.id == person.id)
+                    return true;
+            }
+            return false;
+        }
+
+        public static void main(String[] args) {
+            Person p1 = new Person(1, "aaa");
+            Person p2 = new Person(1, "bbb");
+            HashMap<Person, String> map = new HashMap<>();
+            map.put(p1, "这是p1");
+            System.out.println(map.get(p2));
+        }
+    }
 }
