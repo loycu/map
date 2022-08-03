@@ -9,8 +9,18 @@ put方法
 	3.冲突替换
 	链表转树,resize扩容
 
-Node<K,V>[] tab; Node<K,V> p; int n, i;
+Node<K,V>[] tab; Node<K,V> p; int n(tab长度), i(第几个);
 
+resize   e.hash & oldCap 获取某个位置的bit
+如果这个bit是0 则插入原先的位置,如果bit1则插入两倍的位置
+
+ Node<K,V> loHead = null, loTail = null;(低位链表尾部)
+                        Node<K,V> hiHead = null, hiTail = null;
+                        Node<K,V> next;
+  newTab[e.hash & (newCap - 1)] = e; 如果就是一个数据,那么直接正常
+  newTab[j] = loHead;
+  newTab[j + oldCap] = hiHead;
+    如果是个链表,则需要根据扩容后hash&cap的变化移动数据
 
 resize 容量 阈值 迁移
 超过 cap* loadfactor 0.75 泊松分布
