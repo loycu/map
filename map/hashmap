@@ -1,0 +1,20 @@
+hashmap
+
+put方法
+1.计算hashcode 右移16位异或 使得hashCode均匀分布
+2.通过hashCode 与tab.length-1做与操作获取位置
+3.拿到该位置的值,判断并替换新的node
+	1.直接插入头部
+	2.冲突已经存在插入后面
+	3.冲突替换
+	链表转树,resize扩容
+
+Node<K,V>[] tab; Node<K,V> p; int n, i;
+
+
+resize 容量 阈值 迁移
+超过 cap* loadfactor 0.75 泊松分布
+
+ int oldCap = (oldTab == null) ? 0 : oldTab.length;
+        int oldThr = threshold;
+        int newCap, newThr = 0;
