@@ -1,0 +1,31 @@
+BlockingQueue即阻塞队列，它是基于ReentrantLock
+
+公平性：ReentrantLock默认采用非公平锁，synchronized锁也是采用的非公平锁。
+        如果你没有要求锁有可轮询和可中断的需求，还是使用synchronized内置锁吧。
+
+ThreadLocal中的key基于弱引用，而value则基于强引用。当发生GC时，可能会出现value强引用保留，key弱引用被回收。解决方法是手动调用remove()方法清除不使用的kv对。
+
+  ReentrantLock主要利用CAS+AQS队列来实现。它支持公平锁和非公平锁，两者的实现类似。
+
+  state初始化为0，表示未锁定状态，A线程lock()时，会调用tryAcquire()独占锁并将state+1.之后其他线程再想tryAcquire的时候就会失败，直到A线程unlock() 到state=0为止，其他线程才有机会获取该锁。A释放锁之前，自己也是可以重复获取此锁（state累加），这就是可重入的概念。2
+
+   Polled and Timed
+
+
+   AOS owner thread for reentrant lock 获取属于的线程可重用
+   fireSyn unfairSyn用来 公平锁非公平锁
+
+   synchronized" and "volatile" were the means for achieving concurrency.
+
+   1.) It is not possible to interrupt a thread waiting to acquire a lock (lock Interruptibly).
+
+   2.) It is not possible to attempt to acquire a lock without being willing to wait for it forever (try lock).
+
+
+   Aside from that,
+   ReentrantLock supports lock polling,轮询
+   and interruptible lock waits that support time-out.
+   ReentrantLock also has support for configurable fairness policy,
+   allowing  more flexible thread scheduling.
+
+   https://stackoverflow.com/questions/11821801/why-use-a-reentrantlock-if-one-can-use-synchronizedthis

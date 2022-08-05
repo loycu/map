@@ -1,11 +1,9 @@
 /**
  * @author lotanyang
- * @date 2022/8/3 19:57
+ * @date 2022/8/3 20:06
  **/
-public class WhileThead extends RunnableThread{
-    public WhileThead(String message) {
-        super(message);
-    }
+public class VolitailPrintNumberThread extends Thread{
+    static volatile int number;
 
     /**
      * If this thread was constructed using a separate
@@ -22,12 +20,11 @@ public class WhileThead extends RunnableThread{
     @Override
     public void run() {
         while (true){
-            System.out.println("message = " + message);
-            try {
-                Thread.currentThread().join();//死锁 为了cpu
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            if(number<100){
+                System.out.println("number = " + number++);//乱序执行 100次
+            }else {
+                break;
+            }
             }
         }
-    }
 }

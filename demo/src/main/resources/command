@@ -1,0 +1,3 @@
+ mvn clean --settings c:\user\user-settings.xml --global-settings c:\user\global-settings.xml
+ mvn help:effective-settings
+

@@ -15,6 +15,7 @@ public class JohnWait {
         thread22.start();
         thread22.join();//优先执行
         thread33.start();
+        thread33.join();
 
     }
 }

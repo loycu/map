@@ -1,0 +1,19 @@
+order订单按照月份分表
+acccount_address 用户地址按照用户id取余分10个表
+account_cart 用户购物车按照用户id取余分10个表
+用户收藏
+用户提现
+用户绑定社交账号
+用户登录log 后期用于分析 月份分表
+用户订单消息 account_message_logistics 订单短信等
+用户支付消息 account_message_pay 支付短信等
+account_message_sys_content 系统消息内容
+
+用户账户 account_money
+
+captcha_log_201908 用户验证码 按月分表
+
+pwd_salt 交易密码加盐 消息摘要算法
+
+购物车里面有sku的版本 乐观版本控制 商品有快照版本
+用户收藏店铺,用户收藏商品

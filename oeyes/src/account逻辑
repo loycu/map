@@ -1,0 +1,91 @@
+加入购物车,
+    RPC调用item服务查询商品,其中包含sku version ,返回数据如果报错,返回数据如果为空
+    RPC调用shop服务查询店铺
+    本地查询Member会员
+    查询购物车,如果存在,更新购物车,不存在插入
+购物车限制数量为100
+购物车商品数量加一接口  乐观锁并发时保证数量不会出现错误
+购物车商品根据商品库存排序功能
+
+private List<AccountCart> groupCart(List<ItemSkuDetailVo> itemSkuDetailVoList, List<AccountCart> accountCartList) {
+		List<ItemSkuDetailVo> newItemSkuDetailVos = Lists.newArrayList();
+		Map<Boolean, List<ItemSkuDetailVo>> collect = itemSkuDetailVoList.stream().
+				collect(Collectors.groupingBy(x -> x.getStockAmount() == 0));
+		collect.forEach((x, y) -> newItemSkuDetailVos.addAll(y));
+		List<AccountCart> newSortedAccountCartList = Lists.newArrayList();
+		//调整购物车顺序
+		for (ItemSkuDetailVo itemSkuDetailVo : newItemSkuDetailVos) {
+			for (AccountCart accountCart : accountCartList) {
+				if (accountCart.getSkuId().equals(itemSkuDetailVo.getSkuId())) {
+					newSortedAccountCartList.add(accountCart);
+				}
+			}
+		}
+		return newSortedAccountCartList;
+	}
+批量加入購物車
+
+统计数量
+有价值的sql mybatis
+  <select id="selectCartSumCount" resultType="java.lang.Integer">
+    select sum(amount) from account_cart_${index} where
+     account_id =  #{accountId}
+  </select>
+批量查询
+   <select id="selectByAccountIdAndCartIdList" resultMap="BaseResultMap">
+          select
+          <include refid="Base_Column_List"/>
+          from account_cart_${index} where
+          account_id = #{accountId}
+          and
+          <foreach collection="cartIdList" item="item" index="index" open="(" close=")" separator="OR">
+              cart_id = #{item}
+          </foreach>
+      </select>
+批量更新
+        <update id="checked">
+              update account_cart_${index}
+              set
+              checked = 1
+              where
+              <foreach collection="cartIdList" item="item" index="index" open="(" close=")" separator="OR">
+                  cart_id = #{item}
+              </foreach>
+              and account_id = #{accountId}
+          </update>
+
+批量删除
+
+ <delete id="delete">
+        delete from account_cart_${index}
+        where
+        <foreach collection="cartIdList" item="item" index="index" open="(" close=")" separator="OR">
+            cart_id = #{item}
+        </foreach>
+        and account_id = #{accountId}
+    </delete>
+新增
+     <insert id="insert" useGeneratedKeys="true" keyProperty="accountCart.cartId">
+      insert into account_cart_${index} (
+    	shop_id
+    	,member_id
+    	,account_id
+    	,spu_id
+    	,sku_id
+    	,sku_version
+    	,amount
+    	,checked
+    	,created_time
+        )
+        values (
+    	  #{accountCart.shopId}
+    	, #{accountCart.memberId}
+    	,  #{accountCart.accountId}
+    	, #{accountCart.spuId}
+    	, #{accountCart.skuId}
+    	,  #{accountCart.skuVersion}
+    	,  #{accountCart.amount}
+    	,  #{accountCart.checked}
+    	, #{accountCart.createdTime}
+        )
+      </insert>

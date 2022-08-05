@@ -1,0 +1,9 @@
+ThreadLocal中的key基于弱引用，而value则基于强引用。当发生GC时，可能会出现value强引用保留，key弱引用被回收。解决方法是手动调用remove()方法清除不使用的kv对。
+
+多线程场景下，每个线程需要单独的变量实例
+存储用户Session
+解决线程安全问题
+
+ThreadLocalMap是ThreadLocal的内部类，没有实现Map接口，用独立的方式实现了Map的功能，
+其内部的Entry也独立实现。ThreadLocalMap用于存储每一个线程的变量副本，Map中元素的键为线程对象，而值对应线程的变量副本。
+协程是用户态的线程，没有上下文切换
