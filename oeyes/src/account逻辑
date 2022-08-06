@@ -1,91 +1,44 @@
-加入购物车,
-    RPC调用item服务查询商品,其中包含sku version ,返回数据如果报错,返回数据如果为空
-    RPC调用shop服务查询店铺
-    本地查询Member会员
-    查询购物车,如果存在,更新购物车,不存在插入
-购物车限制数量为100
-购物车商品数量加一接口  乐观锁并发时保证数量不会出现错误
-购物车商品根据商品库存排序功能
+查询用户信息
+    访客:visitor-token
+    根据语言获取国家列表,语言存在了header,如果不存在用默认语言,redis中存的country:english
+更新用户信息
+    更新account主数据库
+    mq发送更新shopEs shop_info_index,更新shop redis
 
-private List<AccountCart> groupCart(List<ItemSkuDetailVo> itemSkuDetailVoList, List<AccountCart> accountCartList) {
-		List<ItemSkuDetailVo> newItemSkuDetailVos = Lists.newArrayList();
-		Map<Boolean, List<ItemSkuDetailVo>> collect = itemSkuDetailVoList.stream().
-				collect(Collectors.groupingBy(x -> x.getStockAmount() == 0));
-		collect.forEach((x, y) -> newItemSkuDetailVos.addAll(y));
-		List<AccountCart> newSortedAccountCartList = Lists.newArrayList();
-		//调整购物车顺序
-		for (ItemSkuDetailVo itemSkuDetailVo : newItemSkuDetailVos) {
-			for (AccountCart accountCart : accountCartList) {
-				if (accountCart.getSkuId().equals(itemSkuDetailVo.getSkuId())) {
-					newSortedAccountCartList.add(accountCart);
-				}
-			}
-		}
-		return newSortedAccountCartList;
-	}
-批量加入購物車
 
-统计数量
-有价值的sql mybatis
-  <select id="selectCartSumCount" resultType="java.lang.Integer">
-    select sum(amount) from account_cart_${index} where
-     account_id =  #{accountId}
-  </select>
-批量查询
-   <select id="selectByAccountIdAndCartIdList" resultMap="BaseResultMap">
-          select
-          <include refid="Base_Column_List"/>
-          from account_cart_${index} where
-          account_id = #{accountId}
-          and
-          <foreach collection="cartIdList" item="item" index="index" open="(" close=")" separator="OR">
-              cart_id = #{item}
-          </foreach>
-      </select>
-批量更新
-        <update id="checked">
-              update account_cart_${index}
-              set
-              checked = 1
-              where
-              <foreach collection="cartIdList" item="item" index="index" open="(" close=")" separator="OR">
-                  cart_id = #{item}
-              </foreach>
-              and account_id = #{accountId}
-          </update>
+    DigestUtils.md5Hex(password + pwdSalt) 用户名密码加盐存数据库
 
-批量删除
 
- <delete id="delete">
-        delete from account_cart_${index}
-        where
-        <foreach collection="cartIdList" item="item" index="index" open="(" close=")" separator="OR">
-            cart_id = #{item}
-        </foreach>
-        and account_id = #{accountId}
-    </delete>
-新增
-     <insert id="insert" useGeneratedKeys="true" keyProperty="accountCart.cartId">
-      insert into account_cart_${index} (
-    	shop_id
-    	,member_id
-    	,account_id
-    	,spu_id
-    	,sku_id
-    	,sku_version
-    	,amount
-    	,checked
-    	,created_time
-        )
-        values (
-    	  #{accountCart.shopId}
-    	, #{accountCart.memberId}
-    	,  #{accountCart.accountId}
-    	, #{accountCart.spuId}
-    	, #{accountCart.skuId}
-    	,  #{accountCart.skuVersion}
-    	,  #{accountCart.amount}
-    	,  #{accountCart.checked}
-    	, #{accountCart.createdTime}
-        )
-      </insert>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+upload to s3
+    @Value("${file-upload.bucket-name}")
+    	private String backetName;
+    @Value("${file-upload.region}")
+    	private String region;
+    @Value("${file-upload.access-url}")
+    	private String accessUrl;
+
+	上传功能
+	@ApiOperation(value = "上传头像")
+	@RequestMapping(value = "/uploadHeadPortrait", method = RequestMethod.POST, produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResultVO<String> uploadHeadPortrait(@ApiParam(value ="头像",required =true) @RequestParam("file") MultipartFile file) {
+		String filePath = FileUtil.uploadImage(file, backetName, region, accessUrl);
+		return new ResultVO<String>(filePath);
+    }
+根据file类型创建inputStream,缩略图压缩
+创建s3Client(accountInfo,clientConfig,region,acl) acl=publicRead

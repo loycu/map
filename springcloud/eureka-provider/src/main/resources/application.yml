@@ -1,0 +1,49 @@
+server:
+  port: 8083
+  servlet:
+    context-path: /account
+  tomcat:
+    max-threads: 1000
+    max-connections: 20000
+spring:
+  application:
+    name: account
+  profiles : 
+    active : local #运行环境配置
+  servlet: 
+    multipart:
+      enabled: true
+      max-file-size: 100MB
+      max-request-size: 100MB
+
+  data:
+    redis:
+      repositories:
+        enabled: false
+    elasticsearch:
+      repositories:
+        enabled: false
+eureka:
+  instance:
+    prefer-ip-address: true
+    lease-expiration-duration-in-seconds: 15 #服务过期时间配置,超过这个时间没有接收到心跳EurekaServer就会将这个实例剔除
+    lease-renewal-interval-in-seconds: 5 #服务刷新时间配置，每隔这个时间会主动心跳一次
+    metadataMap:
+      group: shop-group
+      version: 1.0
+    hostname: localhost
+    instance-id: ${spring.application.name}:${server.port}
+  client:
+    registryFetchIntervalSeconds: 5 #client刷新本地缓存时间
+    serviceUrl:
+      defaultZone: http://127.0.0.1:8000/eureka/
+ribbon:
+
+  #serverListRefreshInterval: 5000 #eureka客户端ribbon刷新时间
+  #ReadTimeout: 60000 #请求处理的超时时间
+  #ConnectTimeout: 30000 #请求连接的超时时间
+swagger: 
+  title: 账户接口
+  version: 1.0
+  description: M站账户相关接口
+  host: localhost:8080

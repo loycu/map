@@ -1,0 +1,7 @@
+邮箱 手机 登录,登录之前发送验证码,存入缓存,验证码,异步提醒(email,sms等.SMS短信即（Short Messaging Service）,保存登录日志)
+sign.equals(DigestUtils.sha1Hex(signStr) 发送邮箱登录验证码之前要验证签名
+
+第三方登录
+facebook，whatsapp，pinterest，instagram
+facebook 调用获取accessToken,用accessToken获取用户数据(bindId,bindtype=facebook),
+增加登录日志,save tokencode 到redis,tokentempcode:保存

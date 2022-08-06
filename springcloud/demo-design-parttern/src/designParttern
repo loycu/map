@@ -1,0 +1,10 @@
+模板方法
+Arrays.sort(Object[])
+AbstactQueuedSynchronizer（简称AQS
+
+简单工厂模式 把判断抽到简单工厂里面
+
+策略模式 具体实现 延迟到子类
+
+简单的用设计模式,复杂的用aop
+动态代理 AOP
