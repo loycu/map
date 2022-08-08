@@ -11,5 +11,11 @@ public class ProviderController {
     public String callProvider() throws Exception {
         return "account provider OK";
     }
+
+    @GetMapping("/timeout")
+    public String callProviderTimeOut() throws Exception {
+        Thread.sleep(10000);
+        return "account provider OK";
+    }
     
 }

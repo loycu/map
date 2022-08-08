@@ -1,0 +1,9 @@
+粘包 拆包 TCP
+两数据包一起接收到
+两次读取 D1 D2部分 D2部分
+
+定长解码器 FixedLengthFrameDecoder
+解决问题的根本手段：找出消息的边界
+固定长度加个长度字段
+
+https://juejin.cn/post/7121178344225243144

@@ -25,5 +25,11 @@ public class ConsumerController {
         return providerClient.list();
     }
 
+    @RequestMapping("/consumer/callProvider/timeOut")
+    public String timeOut() {
+        //使用Feign客户端调用其他服务的接口
+        return providerClient.callProviderTimeOut();
+    }
+
 
 }

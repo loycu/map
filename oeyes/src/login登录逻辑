@@ -5,3 +5,7 @@ sign.equals(DigestUtils.sha1Hex(signStr) 发送邮箱登录验证码之前要验
 facebook，whatsapp，pinterest，instagram
 facebook 调用获取accessToken,用accessToken获取用户数据(bindId,bindtype=facebook),
 增加登录日志,save tokencode 到redis,tokentempcode:保存
+
+第三方先授权
+前端用户登录成返回临时code获取accessToken,用token获取用户数据
+

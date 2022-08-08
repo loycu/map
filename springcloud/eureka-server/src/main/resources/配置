@@ -1,0 +1,59 @@
+eureka:
+  # 实例配置
+  instance:
+    # 客户端在注册时使用自己的IP而不是主机名，缺省：false
+    prefer-ip-address: true
+    # 用实例IP
+    ip-address: ${spring.cloud.client.ip-address}
+    # Eureka客户端向服务端发送心跳的时间间隔，单位：秒,默认：30
+    lease-renewal-interval-in-seconds: 30
+    # Eureka服务端在收到最后一次心跳之后等待的时间上限，单位为秒。
+    # 超过该时间之后服务端会将该服务实例从服务清单中剔除，从而禁止服务调用请求被发送到该实例上
+    lease-expiration-duration-in-seconds: 90
+    # ????????spring.application.name?????????unknown
+    appname: eureka-server
+    # 服务名，默认取spring.application.name的配置值，如果没有则为unknown
+    hostname: localhost
+    # 状态页面的URL，相对路径，默认使用 HTTP 访问，如需使用 HTTPS则要使用绝对路径配置，默认：/info
+    status-page-url-path: /info
+    # 健康检查页面的URL，相对路径，默认使用 HTTP 访问，如需使用 HTTPS则要使用绝对路径配置，默认：/health
+    health-check-url-path: /health
+  # 客户端配置
+  client:
+    # Eureka服务器的地址，类型为HashMap，默认的Key为 defaultZone；默认的Value为 http://localhost:8761/eureka
+    # 如果服务注册中心为高可用集群时，多个注册中心地址以逗号分隔。
+    service-url:
+      defaultZone: http://localhost:8762/eureka
+    # 是否向注册中心注册自己，缺省：true, 一般情况下，Eureka服务端是不需要再注册自己的
+    register-with-eureka: true
+    # 是否从Eureka获取注册信息，缺省：true
+    # 一般情况下，Eureka服务端是不需要的
+    fetch-registry: true
+    # 客户端拉取服务注册信息间隔，单位：秒，缺省：30
+    registry-fetch-interval-seconds: 30
+    # 是否启用客户端健康检查
+    healthcheck:
+      enabled: false
+    # 更新实例信息的变化到Eureka服务端的间隔时间，单位为秒
+    instance-info-replication-interval-seconds: 30
+    # 初始化实例信息到Eureka服务端的间隔时间，单位为秒
+    initial-instance-info-replication-interval-seconds: 30
+    # 轮询Eureka服务端地址更改的间隔时间，单位为秒。当我们与Spring CLoud Config整合，
+    # 动态刷新Eureka的serviceURL地址时需要关注该参数
+    eureka-service-url-poll-interval-seconds: 300
+    # 读取Eureka Server信息的超时时间，单位为秒
+    eureka-server-read-timeout-seconds: 30
+    # 链接Eureka Server的超时时间，单位为秒
+    eureka-server-connect-timeout-seconds: 5
+  # server端配置
+  server:
+    # 是否允许开启自我保护模式，当eureka服务器在短时间丢失过多客户端时，
+    # 自我保护模式可以使服务端不在删除失去连接的客户端,默认：true
+    enable-self-preservation: true
+    # Peer节点更新间隔，单位毫秒
+    peer-eureka-nodes-update-interval-ms: 4000
+    # eureka服务器清理无效节点的时间间隔，单位：毫秒，默认：60000
+    eviction-interval-timer-in-ms: 60000
+————————————————
+版权声明：本文为CSDN博主「karote upup」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
+原文链接：https://blog.csdn.net/qq_37604054/article/details/121068579

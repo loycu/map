@@ -31,7 +31,7 @@ eureka:
     metadataMap:
       group: shop-group
       version: 1.0
-    hostname: localhost
+    hostname: 127.0.0.1
     instance-id: ${spring.application.name}:${server.port}
   client:
     registryFetchIntervalSeconds: 5 #client刷新本地缓存时间

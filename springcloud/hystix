@@ -1,4 +1,59 @@
 hystrix隔离模式目前有两种方式：信号量模式和线程池模式。
 但信号量并不支持超时，当被调服务发生问题时，有少部分用户会长时间无法得到响应。
 
-RequestInterceptor 传递登录信息
+RequestInterceptor 传递登录信息,下游做校验
+
+Provide protection and control over failures and latency from services typically accessed over the network
+Stop cascading of failures resulting from some of the services being down
+Fail fast and rapidly recover
+Degrade gracefully where possible
+Real time monitoring and alerting of command center on failures
+
+
+信号量模式
+在该模式下，接收请求和执行下游依赖在同一个线程内完成，
+不存在线程上下文切换所带来的性能开销，所以大部分场景应该选择信号量模式，
+但是在下面这种情况下，信号量模式并非是一个好的选择。
+
+因为Hystrix默认使用了线程池模式，所以对于每个Command，在初始化的时候，会创建一个对应的线程池，如果项目中需要进行降级的接口非常多，
+
+
+线程池模式
+在该模式下，用户请求会被提交到各自的线程池中执行，把执行每个下游服务的线程分离，从而达到资源隔离的作用
+
+“所谓的客户端弹性模式”，这个模式的目的就是为了让客户端能够快速的失败，而不消耗诸如线程池或者数据库之类的资源，，并且可以
+防止远程服务的问题在服务与服务之间传播，导致批量服务挂掉
+
+客户端负载均衡(client load balance)：
+将服务端的服务实例(集群)的物理位置物理位置缓存在客户端，当服务消费者需要调用该服务的时候，负载均衡器就会从它维护的服务实例（集群）中返回一个给客户端调用，这种模式就是Ribbon提供的功能，其它三种都是Hystrix提供的功能
+
+断路器模式(circuit breaker):
+确保服务客户端不会重复调用失败的服务
+ @HystrixCommand(commandProperties = {
+            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds",value = "4000")
+    })
+后备模式( fallback)：
+当服务调用失败的时候，后备模式询问是否有可执行的方案
+ @GetMapping("fallback")
+    @HystrixCommand(fallbackMethod = "fallback")
+
+舱壁模式(bulkhead)：
+隔离服务客户端上不同的服务调用，以确保表现不佳的服务不会耗尽客户端所有资源
+@GetMapping("/bulkhead")
+    @HystrixCommand(fallbackMethod = "fallback",threadPoolKey = "bulkhead",threadPoolProperties = {
+            @HystrixProperty(name = "coreSize",value = "30"),
+            @HystrixProperty(name = "maxQueueSize",value = "10")
+    })
+
+但是有时候我们发现调用服务有异常的时候，会使用一个默认的服务，让页面能够有数据显示不至于挂掉，
+@HystrixCommand
+另外，使用线程池模式无法传递Header，我估计是由于线程切换，参数传递过程中被去掉了。
+Commands executed in threads have an extra layer of protection against latencies beyond what network timeouts can offer.
+Generally the only time you should use semaphore isolation for HystrixCommands is when the call is so high volume (hundreds per second, per instance) that the overhead of separate threads is too high;
+this typically only applies to non-network calls.
+
+OPEN
+是open打开状态，意思是如果服务提供方的异常率或者是请求的并发量超过设置的阈值之后，就会开启熔断机制，
+开启熔断机制之后服务调用方所有的请求都不会在请求到服务提供方，而是直接使用本地的服务降级方法
+
+熔断后 根据配置时间 请求下游,成功就是half-open

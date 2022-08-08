@@ -31,15 +31,19 @@ eureka:
     metadataMap:
       group: shop-group
       version: 1.0
+    hostname: 127.0.0.1
   client:
     registryFetchIntervalSeconds: 5 #client刷新本地缓存时间
     serviceUrl:
       defaultZone: http://127.0.0.1:8000/eureka/
-ribbon:
 
   #serverListRefreshInterval: 5000 #eureka客户端ribbon刷新时间
   #ReadTimeout: 60000 #请求处理的超时时间
   #ConnectTimeout: 30000 #请求连接的超时时间
+ribbon:
+  ReadTimeout:  5000
+  ConnectTimeout: 5000
+
 swagger: 
   title: 账户接口
   version: 1.0

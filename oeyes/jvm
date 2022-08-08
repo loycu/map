@@ -1,0 +1,37 @@
+堆 方法区 元数据区 虚拟机栈 本地方法栈 程序计数器
+
+方法区 即时编译 常量 静态变量 类信息
+
+堆 eden survivor from    survivor to 老年代
+
+回收方式 算法 引用计数 被引用次数为0 就回收 循环引用 GC roots
+
+GC Roots通过一系列的名为GC Roots的对象作为起始点，
+从这些节点开始向下搜索，搜索过的路径称为引用链，
+当一个对象到GC Roots没有任何引用链相连时，则证明对象是不可用的。
+
+在Java中，可以作为GC Roots的对象包括下面几种：
+虚拟机栈中引用的对象；方法区中类静态属性引用的对象；方法区中的常量引用的对象；本地方法栈中JNI（即一般说的Native方法）的引用的对象
+
+回收算法
+    标记清除 内存碎片 和连续内存不可用
+    标记整理 从根集合（GC Root)开始扫描进行标记然后清除无用的对象 每次都得移动对象，因此成本很高。
+    复制算法 浪费空间
+    标记清除速度快，但是会产生内存碎片；
+    标记整理解决了标记清除内存碎片的问题，但是每次都得移动对象，
+    因此成本很高；复制算法没有内存碎片也不需要移动对象，但是导致空间的浪费；
+
+
+什么时候对象会进入老年代？
+新创建出来的对象一开始都会停留在新生代中，但随着JVM的运行，有些存活的长的对象会慢慢的移动到老年代中。
+-XX:MaxTenuringThreshold 年龄计数器 15
+一批对象的总大小大于这块Survivor内存的50%，那么大于这批对象年龄的对象，就可以直接进入老年代了。
+-XX:PretenureSizeThreshold 大于它直接进入老年代
+
+JVM在发生Minor GC之前，虚拟机会检查老年代最大可用的连续空间是否大于新生代所有对象的总空间，如果大于，则此次Minor GC是安全的如果小于，则虚拟机会查看HandlePromotionFailure设置项的值是否允许担保失败。如果HandlePromotionFailure=true，
+那么会继续检查老年代最大可用连续空间是否大于历次晋升到老年代的对象的平均大小，
+如果大于则尝试进行一次Minor GC，但这次Minor GC依然是有风险的；
+如果小于或者HandlePromotionFailure=false，则改为进行一次Full GC。
+
+-Xms3072m -Xmx3072m -Xmn1536m -Xss=1m -XX:PermSize=256m
+-XX:MaxPermSize=256m -XX:HandlePromotionFailure -XX:SurvivorRatio=8
